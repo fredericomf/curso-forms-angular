@@ -1,8 +1,7 @@
 import { Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
 import { NgForm } from "@angular/forms";
-import { ConsultaCepService } from "../services/consulta-cep.service";
+import { ConsultaCepService } from "../service/consulta-cep.service";
 
 @Component({
   selector: "app-cadastro",
@@ -10,36 +9,39 @@ import { ConsultaCepService } from "../services/consulta-cep.service";
   styleUrls: ["./cadastro.component.css"],
 })
 export class CadastroComponent implements OnInit {
-  constructor(private router: Router, private http: HttpClient, private consultaCepService: ConsultaCepService) {}
+  constructor(
+    private router: Router,
+    private consultacepService: ConsultaCepService
+  ) {}
 
   ngOnInit(): void {}
 
-  cadastrar(form: any) {
-    return form.valid
-      ? this.router.navigate(["sucesso"])
-      : alert("Formulário inválido");
+  consultaCEP(ev: any, f: NgForm) {
+    const cep = ev.target.value;
+    if (cep !== "") {
+      this.consultacepService.getConsultaCep(cep).subscribe((resultado) => {
+        console.log(resultado);
+        this.populandoEndereco(resultado, f);
+      });
+    }
   }
 
-  consultaCEP(cep: any, form: any) {
-    // this.consultaCepService.consultaCep(cep);
-    // cep = cep.value.replace(/\D/g, "");
-    // if (cep != "") {
-    //   var validaCEP = /^[0-9]{8}$/;
-    //   // this.consultaCepService.getDados()
-    //   if (validaCEP.test(cep)) {
-    //     this.http.get(`https://viacep.com.br/ws/${cep}/json/`)
-    //     .subscribe(
-    //       (dados) => this.populaDadosForms(dados, form));
-    //   }
-    // }
-  }
-  populaDadosForms(dados: any, form: NgForm) {
-    form.form.patchValue({
+  populandoEndereco(dados: any, f: NgForm){
+    f.form.patchValue({
       endereco: dados.logradouro,
       complemento: dados.complemento,
       bairro: dados.bairro,
       cidade: dados.localidade,
-      estado: dados.uf,
-    });
+      estado: dados.uf
+    })
+  }
+
+  cadastrar(form: NgForm) {
+    if (form.valid) {
+      this.router.navigate(["./sucesso"]);
+    } else {
+      alert("Formulário inválido");
+    }
+    console.log(form.controls);
   }
 }

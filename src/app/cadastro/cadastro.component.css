@@ -53,10 +53,6 @@
   cursor: pointer;
   float: right;
 }
-.formulario__botao:disabled {
-  opacity: .5;  
-  cursor: no-drop;
-}
 
 .formulario__erro {
   display: flex;
@@ -77,4 +73,9 @@
   font-size: 12px;
   line-height: 18px;
   color: var(--vermelho);
+}
+
+.ng-touched.ng-invalid:not(form){
+  border-color: red;
+  color: red;
 }
